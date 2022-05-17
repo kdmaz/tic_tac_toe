@@ -1,7 +1,4 @@
-use std::{
-    error::Error,
-    fmt::{write, Display},
-};
+use std::{error::Error, fmt::Display};
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum PlayerMove {
@@ -15,6 +12,19 @@ impl PlayerMove {
             Self::X => Self::O,
             Self::O => Self::X,
         }
+    }
+}
+
+impl Display for PlayerMove {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                PlayerMove::X => "X",
+                PlayerMove::O => "O",
+            }
+        )
     }
 }
 
@@ -47,6 +57,25 @@ impl From<SquarePosition> for usize {
     }
 }
 
+impl TryFrom<usize> for SquarePosition {
+    type Error = ();
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(SquarePosition::TopLeft),
+            1 => Ok(SquarePosition::TopMiddle),
+            2 => Ok(SquarePosition::TopRight),
+            3 => Ok(SquarePosition::CenterLeft),
+            4 => Ok(SquarePosition::CenterMiddle),
+            5 => Ok(SquarePosition::CenterRight),
+            6 => Ok(SquarePosition::BottomLeft),
+            7 => Ok(SquarePosition::BottomMiddle),
+            8 => Ok(SquarePosition::BottomRight),
+            _ => Err(()),
+        }
+    }
+}
+
 #[derive(Copy, Clone)]
 struct Square(Option<PlayerMove>);
 
@@ -61,6 +90,18 @@ impl Square {
     }
 }
 
+impl Display for Square {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let player_move = match self.0 {
+            Some(PlayerMove::X) => "X",
+            Some(PlayerMove::O) => "O",
+            None => " ",
+        };
+
+        write!(f, "{}", player_move)
+    }
+}
+
 #[derive(Debug)]
 pub struct SquareAlreadyTaken;
 
@@ -72,7 +113,7 @@ impl Error for SquareAlreadyTaken {
 
 impl std::fmt::Display for SquareAlreadyTaken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Square already taken!")
+        write!(f, "\nSquare already taken!\n")
     }
 }
 
@@ -84,7 +125,6 @@ pub enum Status {
 pub struct Board {
     squares: [Square; 9],
     player_turn: PlayerMove,
-    status: Status,
 }
 
 impl Board {
@@ -92,16 +132,11 @@ impl Board {
         Board {
             squares: [Square(None); 9],
             player_turn: PlayerMove::X,
-            status: Status::InProgress,
         }
     }
 
     pub fn get_player_turn(&self) -> &PlayerMove {
         &self.player_turn
-    }
-
-    pub fn get_status(&self) -> &Status {
-        &self.status
     }
 
     pub fn make_move(&mut self, position: SquarePosition) -> Result<Status, SquareAlreadyTaken> {
@@ -136,19 +171,19 @@ impl Board {
 
         let left_column = self.has_winner_in((
             SquarePosition::TopLeft,
-            SquarePosition::TopMiddle,
-            SquarePosition::TopRight,
+            SquarePosition::CenterLeft,
+            SquarePosition::BottomLeft,
         ));
 
         let center_column = self.has_winner_in((
-            SquarePosition::CenterLeft,
+            SquarePosition::TopMiddle,
             SquarePosition::CenterMiddle,
-            SquarePosition::CenterRight,
+            SquarePosition::BottomMiddle,
         ));
 
         let right_column = self.has_winner_in((
-            SquarePosition::BottomLeft,
-            SquarePosition::BottomMiddle,
+            SquarePosition::TopRight,
+            SquarePosition::CenterRight,
             SquarePosition::BottomRight,
         ));
 
@@ -186,8 +221,28 @@ impl Board {
 
 impl Display for Board {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        todo!();
-        // self.squares
-        // write!(f, "")
+        let board = format!(
+            "\n
+                |     |     
+             {}  |  {}  |  {}  
+           _____|_____|_____
+                |     |     
+             {}  |  {}  |  {}  
+           _____|_____|_____
+                |     |     
+             {}  |  {}  |  {}  
+                |     |     
+            ",
+            self.squares[0],
+            self.squares[1],
+            self.squares[2],
+            self.squares[3],
+            self.squares[4],
+            self.squares[5],
+            self.squares[6],
+            self.squares[7],
+            self.squares[8],
+        );
+        write!(f, "{}", board)
     }
 }
