@@ -28,7 +28,6 @@ impl Display for PlayerMove {
     }
 }
 
-#[derive(Clone, Copy)]
 pub enum SquarePosition {
     TopLeft,
     TopMiddle,
@@ -207,14 +206,13 @@ impl Board {
     }
 
     fn has_winner_in(&self, (a, b, c): (SquarePosition, SquarePosition, SquarePosition)) -> bool {
-        if self.squares[usize::from(a)].0.is_none()
-            || self.squares[usize::from(b)].0.is_none()
-            || self.squares[usize::from(c)].0.is_none()
-        {
+        let a = self.squares[usize::from(a)].0;
+        let b = self.squares[usize::from(b)].0;
+        let c = self.squares[usize::from(c)].0;
+        if a.is_none() || b.is_none() || c.is_none() {
             false
         } else {
-            self.squares[usize::from(a)].0 == self.squares[usize::from(b)].0
-                && self.squares[usize::from(a)].0 == self.squares[usize::from(c)].0
+            a == b && a == c
         }
     }
 }
@@ -223,15 +221,15 @@ impl Display for Board {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let board = format!(
             "\n
-                |     |     
-             {}  |  {}  |  {}  
-           _____|_____|_____
-                |     |     
-             {}  |  {}  |  {}  
-           _____|_____|_____
-                |     |     
-             {}  |  {}  |  {}  
-                |     |     
+     |     |     
+  {}  |  {}  |  {}  
+_____|_____|_____
+     |     |     
+  {}  |  {}  |  {}  
+_____|_____|_____
+     |     |     
+  {}  |  {}  |  {}  
+     |     |     \n
             ",
             self.squares[0],
             self.squares[1],

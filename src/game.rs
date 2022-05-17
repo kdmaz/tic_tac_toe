@@ -14,8 +14,8 @@ impl Game {
 
                 match board.make_move(position) {
                     Ok(Status::Complete) => {
-                        println!("Player \"{}\" wins!", turn);
                         println!("{}", board);
+                        println!("\nPlayer \"{}\" wins!\n", turn);
                         break 'in_progress;
                     }
                     Ok(Status::InProgress) => continue 'in_progress,
