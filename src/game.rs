@@ -18,6 +18,11 @@ impl Game {
                         println!("\nPlayer \"{}\" wins!\n", turn);
                         break 'in_progress;
                     }
+                    Ok(Status::Draw) => {
+                        println!("{}", board);
+                        println!("\nDraw!\n");
+                        break 'in_progress;
+                    }
                     Ok(Status::InProgress) => continue 'in_progress,
                     Err(err) => {
                         println!("{}", err);
@@ -43,9 +48,9 @@ impl Game {
         println!(
             "\
             Player \"{}\" to move!\n
-top left    (0)  top middle    (1)     top right (2)
-center left (3)  center middle (4)  center right (5)
-bottom left (6)  bottom middle (7)  bottom right (8)
+top left    (1)  top middle    (2)     top right (3)
+center left (4)  center middle (5)  center right (6)
+bottom left (7)  bottom middle (8)  bottom right (9)
             ",
             turn
         );

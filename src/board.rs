@@ -61,15 +61,15 @@ impl TryFrom<usize> for SquarePosition {
 
     fn try_from(value: usize) -> Result<Self, Self::Error> {
         match value {
-            0 => Ok(SquarePosition::TopLeft),
-            1 => Ok(SquarePosition::TopMiddle),
-            2 => Ok(SquarePosition::TopRight),
-            3 => Ok(SquarePosition::CenterLeft),
-            4 => Ok(SquarePosition::CenterMiddle),
-            5 => Ok(SquarePosition::CenterRight),
-            6 => Ok(SquarePosition::BottomLeft),
-            7 => Ok(SquarePosition::BottomMiddle),
-            8 => Ok(SquarePosition::BottomRight),
+            1 => Ok(SquarePosition::TopLeft),
+            2 => Ok(SquarePosition::TopMiddle),
+            3 => Ok(SquarePosition::TopRight),
+            4 => Ok(SquarePosition::CenterLeft),
+            5 => Ok(SquarePosition::CenterMiddle),
+            6 => Ok(SquarePosition::CenterRight),
+            7 => Ok(SquarePosition::BottomLeft),
+            8 => Ok(SquarePosition::BottomMiddle),
+            9 => Ok(SquarePosition::BottomRight),
             _ => Err(()),
         }
     }
@@ -118,12 +118,14 @@ impl std::fmt::Display for SquareAlreadyTaken {
 
 pub enum Status {
     InProgress,
+    Draw,
     Complete,
 }
 
 pub struct Board {
     squares: [Square; 9],
     player_turn: PlayerMove,
+    turn_num: u8,
 }
 
 impl Board {
@@ -131,6 +133,7 @@ impl Board {
         Board {
             squares: [Square(None); 9],
             player_turn: PlayerMove::X,
+            turn_num: 0,
         }
     }
 
@@ -141,9 +144,12 @@ impl Board {
     pub fn make_move(&mut self, position: SquarePosition) -> Result<Status, SquareAlreadyTaken> {
         self.squares[usize::from(position)].try_make_move(self.player_turn)?;
         self.player_turn = PlayerMove::toggle(self.player_turn);
+        self.turn_num += 1;
 
         Ok(if self.has_winner() {
             Status::Complete
+        } else if self.turn_num > 8 {
+            Status::Draw
         } else {
             Status::InProgress
         })
