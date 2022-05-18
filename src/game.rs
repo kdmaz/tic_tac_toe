@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use crate::board::{Board, PlayerMove, SquarePosition, Status};
 
 pub struct Game;
@@ -56,6 +58,9 @@ bottom left (7)  bottom middle (8)  bottom right (9)
         );
 
         loop {
+            print!("Enter move: ");
+            std::io::stdout().flush().unwrap();
+
             let mut position = String::new();
             std::io::stdin().read_line(&mut position).unwrap();
 
