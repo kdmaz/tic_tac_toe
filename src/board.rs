@@ -56,10 +56,10 @@ impl From<SquarePosition> for usize {
     }
 }
 
-impl TryFrom<usize> for SquarePosition {
+impl TryFrom<u8> for SquarePosition {
     type Error = ();
 
-    fn try_from(value: usize) -> Result<Self, Self::Error> {
+    fn try_from(value: u8) -> Result<Self, Self::Error> {
         match value {
             1 => Ok(SquarePosition::TopLeft),
             2 => Ok(SquarePosition::TopMiddle),

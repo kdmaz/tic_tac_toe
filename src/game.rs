@@ -59,7 +59,7 @@ bottom left (7)  bottom middle (8)  bottom right (9)
             let mut position = String::new();
             std::io::stdin().read_line(&mut position).unwrap();
 
-            let num = match position.trim().parse::<usize>() {
+            let num = match position.trim().parse::<u8>() {
                 Ok(num) => num,
                 Err(_) => {
                     println!("\nChoose a valid square!\n");
